@@ -11,6 +11,8 @@ import org.json.JSONObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -22,10 +24,13 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/school/security")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class AuthenticationController {
 
     @Autowired
@@ -43,7 +48,7 @@ public class AuthenticationController {
 
 
     @PostMapping("/authenticate")
-    public void createAuthenticationToken(@RequestBody AuthenticationRequestDto authentication, HttpServletResponse response) throws IOException {
+    public  ResponseEntity<Map<String, Object>> createAuthenticationToken(@RequestBody AuthenticationRequestDto authentication, HttpServletResponse response) throws IOException {
 
         try {
        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authentication.getEmail(),authentication.getPassword()));
@@ -54,18 +59,19 @@ public class AuthenticationController {
    }
    final UserDetails userDetails=userDetailsService.loadUserByUsername(authentication.getEmail());
         Optional<User>optionalUser=this.userRepositories.findByEmail(userDetails.getUsername());
-        System.out.println("optional user"+optionalUser);
+
         final String token= jwtHelper.generateToken(userDetails.getUsername(),UserRole.ADMIN);
 
-        if (optionalUser.isPresent()){
-            response.getWriter().write(new JSONObject()
-                    .put("UserId",optionalUser.get().getId())
-                    .put("role",optionalUser.get().getUserRole()).toString());
+        if (optionalUser.isPresent()) {
+            Map<String, Object> responseBody = new HashMap<>();
+            responseBody.put("UserId", optionalUser.get().getId());
+            responseBody.put("role", optionalUser.get().getUserRole());
+            responseBody.put("token", token);
+            return ResponseEntity.ok(responseBody);
         }
-        response.setHeader("Access-Control-Expose-Headers","Authorization");
-        response.setHeader("Access-Control-Allow-Headers","Authorization,X-Pingother,Origin,X-Requested-With,Content-Type,Accept,X-Custom-header");
-        response.setHeader(AppConstant.HEADER_STRING,AppConstant.TOKEN_PREFIX+token);
-
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("message", "User not found");
+        return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND).body(responseBody);
     }
 
    }

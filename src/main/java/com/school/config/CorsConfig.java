@@ -27,10 +27,13 @@ public class CorsConfig implements Filter {
      HttpServletRequest request = (HttpServletRequest) servletRequest;
      Map<String,String>map=new HashMap<>();
      String originHeader=request.getHeader("Origin");
-     response.setHeader("Access-Control-Allow-Origin", originHeader);
+        System.out.println("Request Origin: " + originHeader);
+        response.setHeader("Access-Control-Allow-Origin", originHeader);
      response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
      response.setHeader("Access-Control-Max-Age", "3600");
-     response.setHeader("Access-Control-Allow-Headers", "*");
+     response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, Accept, X-Requested-With");
+     response.setHeader("Access-Control-Expose-Headers", "Authorization");
+     response.setHeader("Access-Control-Allow-Headers", "Authorization,X-Pingother,Origin,X-Requested-With,Content-Type,Accept,X-Custom-header");
      if ("OPTIONS".equals(request.getMethod())) {
          response.setStatus(HttpServletResponse.SC_OK);
      }
