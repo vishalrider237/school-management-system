@@ -1,0 +1,12 @@
+applications:
+  -  name: school-management-java
+     memory: 350M
+     path: target/java-0.0.1-SNAPSHOT.jar
+     random-route: true
+     buildpack: sap_java_buildpack
+     env:
+       TZ: GMT+5:30
+     services:
+       - PostgreeSql
+
+
