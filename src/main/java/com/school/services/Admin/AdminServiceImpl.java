@@ -315,6 +315,13 @@ public class AdminServiceImpl implements AdminService{
         return out.toByteArray();
     }
 
+    @Override
+    public ResponseEntity<?> searchStudent(String studentName, String mail) {
+        String name = (studentName != null) ? studentName.toLowerCase() : null;
+        String email = (mail != null) ? mail.toLowerCase() : null;
+        return new ResponseEntity<>(this.userRepositories.findByUserNameAndMail(name,email),HttpStatus.OK);
+    }
+
 }
 
 

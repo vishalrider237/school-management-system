@@ -30,4 +30,6 @@ public interface AdminService {
     byte[] exportToExcel() throws IOException;
 
     byte[] exportToPdf() throws DocumentException;
+
+    ResponseEntity<?> searchStudent(String studentName, String mail);
 }

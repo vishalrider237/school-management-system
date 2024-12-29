@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -29,4 +30,8 @@ public interface UserRepositories extends JpaRepository<User,Long> {
 
     @Query(value = "SELECT count(hd.*) FROM users hd where hd.user_role ='1'",nativeQuery = true)
     Long countAllStudents();
+
+    @Query(value = "SELECT * FROM users u WHERE (:studentName IS NULL OR :studentName = '' OR LOWER(u.name) LIKE %:studentName%) AND (:mail IS NULL OR :mail='' OR LOWER(u.email) LIKE %:mail%) ORDER BY u.created_on DESC", nativeQuery = true)
+    List<User> findByUserNameAndMail(@Param("studentName") String studentName, @Param("mail") String mail);
+
 }

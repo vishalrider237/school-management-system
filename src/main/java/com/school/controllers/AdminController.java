@@ -3,6 +3,7 @@ package com.school.controllers;
 import com.school.dto.FeeDto;
 import com.school.dto.MailTriggerDto;
 import com.school.dto.StudentDto;
+import com.school.dto.StudentSearchDto;
 import com.school.services.Admin.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -69,5 +70,9 @@ public class AdminController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=user_data.pdf")
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdf);
+    }
+    @PostMapping("/search")
+    public ResponseEntity<?> searchStudent(@RequestBody StudentSearchDto searchDto) {
+        return adminService.searchStudent(searchDto.getName(),searchDto.getMail());
     }
 }
